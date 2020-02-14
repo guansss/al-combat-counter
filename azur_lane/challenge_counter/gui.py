@@ -16,8 +16,8 @@ def call_after(func: Callable):
 class ControlPanel(object):
     frame: wx.Frame
 
-    def __init__(self):
-        self.frame = wx.Frame(None, title='Azur Lane SL Counter')
+    def __init__(self, *args, **kw):
+        self.frame = wx.Frame(None, title='Azur Lane Challenge Counter', *args, **kw)
         self.frame.Show()
 
 

@@ -1,7 +1,7 @@
 import wx
 
-from azur_lane.sl_counter.gui import DisplayPanel
-from azur_lane.sl_counter.worker import Worker
+from azur_lane.challenge_counter.gui import DisplayPanel, ControlPanel
+from azur_lane.challenge_counter.worker import Worker
 
 
 def main():

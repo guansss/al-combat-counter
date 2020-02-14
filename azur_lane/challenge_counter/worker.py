@@ -5,7 +5,7 @@ from typing import NewType, Optional
 
 import win32gui
 
-from azur_lane.sl_counter.gui import DisplayPanel
+from azur_lane.challenge_counter.gui import DisplayPanel
 
 Handle = NewType('Handle', int)
 
