@@ -26,7 +26,7 @@ class DisplayPanel(object):
     text: wx.StaticText
 
     def __init__(self, size=(200, 40), *args, **kw):
-        style = wx.STAY_ON_TOP | wx.BORDER_NONE
+        style = wx.FRAME_NO_TASKBAR | wx.STAY_ON_TOP | wx.BORDER_NONE
         self.frame = wx.Frame(None, style=style, size=size, *args, **kw)
 
         # let the frame can be clicked through, which means it won't block mouse events
