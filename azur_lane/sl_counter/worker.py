@@ -1,13 +1,41 @@
 import re
+import threading
+import time
 from typing import NewType, Optional
 
 import win32gui
 
+from azur_lane.sl_counter.gui import DisplayPanel
+
 Handle = NewType('Handle', int)
 
 
-def main():
-    hwnd = get_window('MuMu')
+class Worker(threading.Thread):
+    display: DisplayPanel
+
+    def __init__(self, display: DisplayPanel):
+        super().__init__()
+
+        self.display = display
+        self.setDaemon(True)
+
+    def run(self):
+        time.sleep(0.5)
+        self.setup()
+
+    def setup(self):
+        hwnd = get_window('MuMu')
+
+        if hwnd:
+            mumu = MuMuWindow(hwnd)
+
+            self.display.display('SL次数')
+
+
+class MuMuWindow(object):
+
+    def __init__(self, hwnd: Handle):
+        pass
 
 
 def get_window(title_pattern: str) -> Optional[Handle]:
@@ -30,7 +58,3 @@ def get_window(title_pattern: str) -> Optional[Handle]:
             raise
 
     return Handle(hwnd)
-
-
-if __name__ == '__main__':
-    main()
