@@ -54,7 +54,9 @@ def get_window(title_pattern: str) -> Optional[Handle]:
     try:
         win32gui.EnumWindows(handler, None)
     except BaseException as e:
-        if not (hasattr(e, 'winerror') and (e.winerror == 0 or e.winerror == 126)):
+        # swallow the error that will be mysteriously thrown when breaking the window enumeration by returning False
+        # in handler, its error code can be 0 or 126
+        if getattr(e, 'winerror', -1) not in (0, 126):
             raise
 
     return Handle(hwnd)
