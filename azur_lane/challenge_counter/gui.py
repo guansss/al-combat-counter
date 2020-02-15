@@ -5,10 +5,20 @@ import win32gui
 import wx
 
 
-# is this necessary?
-def call_after(func: Callable):
-    def wrapper(*args, **kw):
-        return wx.CallAfter(func, *args, **kw)
+def thread_safe(func: Callable):
+    def wrapper(self, *args, **kw):
+
+        def runner():
+            try:
+                return func(self, *args, **kw)
+            except Exception as e:
+                # catch and ignore the error of "wrapped C/C++ object of type <...> has been deleted"
+                if 'has been deleted' not in str(e):
+                    raise
+
+        # self will be False when the wx.Window instance has been destroyed
+        if self:
+            return wx.CallAfter(runner)
 
     return wrapper
 
@@ -20,8 +30,14 @@ class App(wx.App):
         self.control_panel = ControlFrame()
         self.display_panel = DisplayFrame(None, pos=(0, 0), point_size=23)
 
+        self.control_panel.Bind(wx.EVT_CLOSE, self.on_exit)
+
         self.display_panel.Show()
         self.control_panel.Show()
+
+    def on_exit(self, event: wx.CloseEvent):
+        self.display_panel.Close(True)
+        event.Skip()
 
 
 class ControlFrame(wx.Frame):
@@ -63,9 +79,11 @@ class ControlFrame(wx.Frame):
         self.Layout()
         self.Centre(wx.BOTH)
 
+    @thread_safe
     def info(self, text: str):
         self.info_text.SetLabelText(text)
 
+    @thread_safe
     def set_number(self, number: int):
         self.spin.Value = number
 
@@ -110,9 +128,11 @@ class DisplayFrame(wx.Frame):
 
         sizer.Add(self.text, 0, wx.LEFT | wx.RIGHT, border=5)
 
+    @thread_safe
     def display(self, text: str):
         # freeze/thaw also to prevent text flickering
         self.text.Freeze()
         self.text.SetLabelText(text)
         self.text.Thaw()
+
         self.GetSizer().Fit(self)
