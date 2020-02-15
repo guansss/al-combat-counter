@@ -18,7 +18,7 @@ class App(wx.App):
         super().__init__()
 
         self.control_panel = ControlFrame()
-        self.display_panel = DisplayFrame(None, pos=(0, 0), size=(200, 40))
+        self.display_panel = DisplayFrame(None, pos=(0, 0), point_size=23)
 
         self.display_panel.Show()
         self.control_panel.Show()
@@ -80,9 +80,9 @@ class ControlFrame(wx.Frame):
 
 
 class DisplayFrame(wx.Frame):
-    def __init__(self, parent=None, size=(200, 40), *args, **kw):
-        super().__init__(parent, size=size,
-                         style=wx.FRAME_NO_TASKBAR | wx.STAY_ON_TOP | wx.BORDER_NONE | wx.CLIP_CHILDREN, *args, **kw)
+    def __init__(self, parent=None, point_size=23, *args, **kw):
+        super().__init__(parent, style=wx.FRAME_NO_TASKBAR | wx.STAY_ON_TOP | wx.BORDER_NONE | wx.CLIP_CHILDREN, *args,
+                         **kw)
 
         # let the frame can be clicked through, which means it won't block mouse events
         # http://wxwidgets.10942.n7.nabble.com/wxPython-and-pywin32-Implementing-on-top-transparency-and-click-through-on-Windows-tp30543.html
@@ -105,7 +105,7 @@ class DisplayFrame(wx.Frame):
         self.text.SetForegroundColour('white')
 
         font = self.text.Font
-        font.PointSize = size[1] / 1.7  # divided by line height
+        font.PointSize = point_size
         self.text.Font = font
 
         sizer.Add(self.text, 0, wx.LEFT | wx.RIGHT, border=5)
