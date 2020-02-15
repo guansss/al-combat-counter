@@ -5,18 +5,13 @@ from typing import NewType, Optional
 
 import win32gui
 
-from azur_lane.challenge_counter.gui import DisplayPanel
-
 Handle = NewType('Handle', int)
 
 
 class Worker(threading.Thread):
-    display: DisplayPanel
-
-    def __init__(self, display: DisplayPanel):
+    def __init__(self):
         super().__init__()
 
-        self.display = display
         self.setDaemon(True)
 
     def run(self):
@@ -28,8 +23,6 @@ class Worker(threading.Thread):
 
         if hwnd:
             mumu = MuMuWindow(hwnd)
-
-            self.display.display('SL次数')
 
 
 class MuMuWindow(object):
