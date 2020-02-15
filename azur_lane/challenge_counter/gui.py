@@ -4,6 +4,8 @@ import win32con
 import win32gui
 import wx
 
+from wx.lib.scrolledpanel import ScrolledPanel
+
 
 def thread_safe(func: Callable):
     def wrapper(self, *args, **kw):
@@ -62,17 +64,19 @@ class ControlFrame(wx.Frame):
         frame_sizer = wx.BoxSizer(wx.VERTICAL)
         frame_sizer.Add(self.spin, flag=wx.ALIGN_CENTER | wx.ALL, border=5)
 
-        info_panel = wx.Panel(self, style=wx.BORDER_THEME | wx.TAB_TRAVERSAL)
-        panel_sizer = wx.BoxSizer(wx.VERTICAL)
+        info_panel = ScrolledPanel(self, style=wx.BORDER_THEME | wx.TAB_TRAVERSAL)
 
         self.info_text = wx.StaticText(info_panel)
         self.info_text.Wrap(-1)
+        self.info_text.SetFocus()  # this removes focus from the SpinCtrl
 
+        panel_sizer = wx.BoxSizer(wx.VERTICAL)
         panel_sizer.Add(self.info_text, 0, wx.ALL, 5)
 
         info_panel.SetSizer(panel_sizer)
         info_panel.Layout()
-        panel_sizer.Fit(info_panel)
+        info_panel.SetupScrolling()
+        panel_sizer.FitInside(info_panel)
         frame_sizer.Add(info_panel, 1, wx.EXPAND | wx.ALL, 5)
 
         self.SetSizer(frame_sizer)
@@ -80,12 +84,22 @@ class ControlFrame(wx.Frame):
         self.Centre(wx.BOTH)
 
     @thread_safe
-    def info(self, text: str):
-        self.info_text.SetLabelText(text)
+    def log(self, text: str):
+        logged = self.info_text.GetLabelText()
+
+        if not logged or len(logged) > 1000000:
+            logged = text
+        else:
+            logged += '\n' + text
+
+        self.info_text.SetLabelText(logged)
+
+        pane = self.info_text.GetParent()
+        pane.GetSizer().FitInside(pane)
 
     @thread_safe
     def set_number(self, number: int):
-        self.spin.Value = number
+        self.spin.SetValue(number)
 
     def on_spin(self, event: wx.SpinEvent):
         self.on_number_change(event.GetPosition())
@@ -122,9 +136,9 @@ class DisplayFrame(wx.Frame):
         self.text = wx.StaticText(self)
         self.text.SetForegroundColour('white')
 
-        font = self.text.Font
+        font = self.text.GetFont()
         font.PointSize = point_size
-        self.text.Font = font
+        self.text.SetFont(font)
 
         sizer.Add(self.text, 0, wx.LEFT | wx.RIGHT, border=5)
 

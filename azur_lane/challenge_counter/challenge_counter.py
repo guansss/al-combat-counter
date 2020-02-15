@@ -13,6 +13,8 @@ def main():
 
     worker.on_count = worker_on_count
 
+    worker.log = lambda text: app.control_panel.log(text)
+
     app.control_panel.on_number_change = lambda number: setattr(worker, 'count', number)
 
     worker.start()

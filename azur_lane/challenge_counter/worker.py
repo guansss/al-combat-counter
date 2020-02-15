@@ -1,7 +1,7 @@
 import re
 import threading
 import time
-from typing import NewType, Optional
+from typing import NewType, Optional, Tuple
 
 import win32gui
 
@@ -22,13 +22,18 @@ class Worker(threading.Thread):
         while True:
             self.count += 1
             self.on_count(self.count)
-            time.sleep(0.1)
+            time.sleep(1)
 
     def setup(self):
-        hwnd = get_window('MuMu')
+        hwnd, title = get_window('MuMu')
 
         if hwnd:
+            self.log('Find window [%s]' % title)
+
             mumu = MuMuWindow(hwnd)
+
+    def log(self, text: str):
+        pass
 
     def on_count(self, number: int):
         pass
@@ -40,12 +45,14 @@ class MuMuWindow(object):
         pass
 
 
-def get_window(title_pattern: str) -> Optional[Handle]:
+def get_window(title_pattern: str) -> Tuple[Optional[Handle], str]:
     reg = re.compile(title_pattern)
     hwnd: Optional[Handle] = None
+    title = ''
 
     def handler(_hwnd: Handle, _):
         nonlocal hwnd
+        nonlocal title
 
         title = win32gui.GetWindowText(_hwnd)
 
@@ -61,4 +68,4 @@ def get_window(title_pattern: str) -> Optional[Handle]:
         if getattr(e, 'winerror', -1) not in (0, 126):
             raise
 
-    return Handle(hwnd)
+    return hwnd, title
