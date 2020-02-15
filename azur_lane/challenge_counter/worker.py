@@ -14,15 +14,24 @@ class Worker(threading.Thread):
 
         self.setDaemon(True)
 
+        self.count = 0
+
     def run(self):
-        time.sleep(0.5)
         self.setup()
+
+        while True:
+            self.count += 1
+            self.on_count(self.count)
+            time.sleep(0.1)
 
     def setup(self):
         hwnd = get_window('MuMu')
 
         if hwnd:
             mumu = MuMuWindow(hwnd)
+
+    def on_count(self, number: int):
+        pass
 
 
 class MuMuWindow(object):
