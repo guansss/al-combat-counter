@@ -1,9 +1,9 @@
+import datetime
 from typing import Callable
 
 import win32con
 import win32gui
 import wx
-
 from wx.lib.scrolledpanel import ScrolledPanel
 
 
@@ -85,6 +85,8 @@ class ControlFrame(wx.Frame):
 
     @thread_safe
     def log(self, text: str):
+        text = '[%s]  ' % datetime.datetime.now().strftime('%H:%M:%S') + text
+
         logged = self.info_text.GetLabelText()
 
         if not logged or len(logged) > 1000000:
