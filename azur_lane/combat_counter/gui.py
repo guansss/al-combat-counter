@@ -46,7 +46,7 @@ class ControlFrame(wx.Frame):
     def __init__(self, parent=None, *args, **kw):
         super().__init__(
             parent,
-            title='Azur Lane Challenge Counter',
+            title='Azur Lane Combat Counter',
             style=wx.CAPTION | wx.CLOSE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.TAB_TRAVERSAL | wx.RESIZE_BORDER | wx.CLIP_CHILDREN,
             *args, **kw
         )

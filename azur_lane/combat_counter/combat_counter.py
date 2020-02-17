@@ -1,5 +1,5 @@
-from azur_lane.challenge_counter.gui import App
-from azur_lane.challenge_counter.worker import Worker
+from azur_lane.combat_counter.gui import App
+from azur_lane.combat_counter.worker import Worker
 
 
 def main():
@@ -8,7 +8,7 @@ def main():
     worker = Worker(lambda text: app.control_panel.log(text))
 
     def on_count(number: int):
-        app.display_panel.display('挑战次数：%d' % number)
+        app.display_panel.display('出击次数：%d' % number)
         app.control_panel.set_number(number)
 
     on_count(0)  # display initially
