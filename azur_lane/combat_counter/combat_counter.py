@@ -11,7 +11,21 @@ def main():
         app.display_panel.display('出击次数：%d' % number)
         app.control_panel.set_number(number)
 
-    on_count(0)  # display initially
+        try:
+            with open('record.txt', 'w') as w:
+                w.write(str(number))
+        except Exception as e:
+            app.control_panel.log(str(e))
+
+    record = 0
+
+    try:
+        with open('record.txt', 'r') as r:
+            record = int(r.read() or 0)
+    except Exception:
+        pass
+
+    on_count(record)  # display initially
 
     worker.on_count = on_count
 
