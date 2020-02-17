@@ -2,6 +2,8 @@
 
 Automatic combat recording.
 
+![preview](preview.jpg)
+
 Currently only MuMu Emulator is supported for recognition. To support another emulator, you can inherit the `GameWindow` class and replace the constructor in `Worker.__init__()`.
 
 ```python
