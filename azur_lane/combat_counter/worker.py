@@ -68,7 +68,7 @@ PROGRESS_SAMPLE_POINTS_AMOUNT = 6
 PROGRESS_RECOGNITION_REQUIRED_POINTS = 4  # the minimum points required for the sum of foreground and background
 PROGRESS_RECOGNITION_REQUIRED_POINTS_EACH = 2  # the minimum points required for each of foreground and background
 
-# the coordinates was recorded in 2560*1440 resolution
+# the coordinates were recorded in 2560*1440 resolution
 PROGRESS_Y = 1356 / 1440
 PROGRESS_SAMPLE_POINTS_X = [
     (80 + (2560 - 80 * 2) * i / PROGRESS_SAMPLE_POINTS_AMOUNT) / 2560
