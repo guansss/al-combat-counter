@@ -8,12 +8,11 @@ from typing import NewType, Optional, Tuple, List, Callable
 
 import win32gui
 
-sys.path.append('../../')
+sys.path.append('../../')  # noqa: E402
 
-from utils.graphic import unpack_rgb_from_colorref  # noqa: E402
+from utils.graphic import unpack_rgb_from_colorref
 
 Handle = NewType('Handle', int)
-
 RGBColor = collections.namedtuple('Color', ['r', 'g', 'b'])
 
 

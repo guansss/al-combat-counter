@@ -1,3 +1,8 @@
+import os
+
+# make the script runnable from anywhere
+os.chdir(os.path.dirname(__file__))  # noqa: E402
+
 from gui import App
 from worker import Worker
 
