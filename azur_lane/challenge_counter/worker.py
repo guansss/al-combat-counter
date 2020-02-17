@@ -3,49 +3,44 @@ import math
 import re
 import threading
 import time
-from typing import NewType, Optional, Tuple, List
+from typing import NewType, Optional, Tuple, List, Callable
 
 import win32gui
 
 from utils.graphic import unpack_rgb_from_colorref
 
 Handle = NewType('Handle', int)
+
 RGBColor = collections.namedtuple('Color', ['r', 'g', 'b'])
 
 
 class Worker(threading.Thread):
-    def __init__(self):
+    def __init__(self, logger: Callable[[str], None]):
         super().__init__()
 
         self.setDaemon(True)
 
-        self.game_window = None
+        self.logger = logger
         self.count = 0
 
-    def run(self):
-        self.setup()
+        try:
+            self.game_window = MuMuWindow(logger)
+            self.game_window.on_combat_loading_completed = self.increase_count
+        except Exception as e:
+            self.logger('E: ' + str(e))
 
+    def run(self):
         while True:
-            if self.game_window:
+            try:
                 self.game_window.update()
+            except Exception as e:
+                self.logger('E: ' + str(e))
 
             time.sleep(0.5)
-
-    def setup(self):
-        hwnd, title = get_window('MuMu')
-
-        if hwnd:
-            self.log('Find window [%s]' % title)
-
-            self.game_window = MuMuWindow(hwnd)
-            self.game_window.on_combat_loading_completed = self.increase_count
 
     def increase_count(self):
         self.count += 1
         self.on_count(self.count)
-
-    def log(self, text: str):
-        pass
 
     def on_count(self, number: int):
         pass
@@ -70,16 +65,27 @@ PROGRESS_SAMPLE_POINTS_X = [
 DETECTION_COOL_DOWN = 3  # seconds
 
 
-class MuMuWindow(object):
-    def __init__(self, hwnd: Handle):
-        self.hwnd = hwnd
-        self.canvas_hwnd, _ = get_window('canvas', hwnd)
-        self.canvas_hdc = win32gui.GetDC(self.canvas_hwnd)
+class GameWindow(object):
+    def __init__(self, logger: Callable[[str], None]):
+        self.logger = logger
+
+        self.canvas_hwnd = Handle(0)
+        self.canvas_hdc = Handle(0)
 
         self.combat_loading = False
         self.next_detection_time = 0
 
+    def _setup_window(self):
+        """ Assigns canvas_hwnd and canvas_hdc. """
+        raise NotImplementedError()
+
     def update(self):
+        if not win32gui.IsWindow(self.canvas_hwnd):
+            self._setup_window()
+
+            # postpone detection
+            return
+
         now = time.time()
 
         if self.combat_loading or now >= self.next_detection_time:
@@ -134,9 +140,25 @@ class MuMuWindow(object):
         pass
 
 
-def get_window(title_pattern: str, parent: Optional[Handle] = None) -> Tuple[Optional[Handle], str]:
+class MuMuWindow(GameWindow):
+    def _setup_window(self):
+        hwnd, title = get_window('MuMu')
+
+        if hwnd:
+            self.canvas_hwnd, _ = get_window('canvas', hwnd)
+
+            if self.canvas_hwnd:
+                self.logger('Find window [%s]' % title)
+                self.canvas_hdc = win32gui.GetDC(self.canvas_hwnd)
+            else:
+                self.logger('Find window [%s] but canvas is not ready' % title)
+        else:
+            self.logger('Could not find window')
+
+
+def get_window(title_pattern: str, parent: Optional[Handle] = None) -> Tuple[Handle, str]:
     reg = re.compile(title_pattern)
-    hwnd: Optional[Handle] = None
+    hwnd = Handle(0)
     title = ''
 
     def handler(_hwnd: Handle, _):

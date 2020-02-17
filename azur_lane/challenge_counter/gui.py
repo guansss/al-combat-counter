@@ -89,15 +89,15 @@ class ControlFrame(wx.Frame):
 
         logged = self.info_text.GetLabelText()
 
-        if not logged or len(logged) > 1000000:
+        if not logged or len(logged) > 100000:
             logged = text
         else:
-            logged += '\n' + text
+            logged = text + '\n' + logged
 
         self.info_text.SetLabelText(logged)
 
-        pane = self.info_text.GetParent()
-        pane.GetSizer().FitInside(pane)
+        panel = self.info_text.GetParent()
+        panel.GetSizer().FitInside(panel)
 
     @thread_safe
     def set_number(self, number: int):
