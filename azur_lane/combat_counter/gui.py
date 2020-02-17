@@ -32,6 +32,7 @@ class App(wx.App):
         self.control_panel = ControlFrame()
         self.display_panel = DisplayFrame(None, pos=(0, 0), point_size=23)
 
+        self.control_panel.on_display_check = lambda checked: self.display_panel.Show(checked)
         self.control_panel.Bind(wx.EVT_CLOSE, self.on_exit)
 
         self.display_panel.Show()
@@ -54,32 +55,44 @@ class ControlFrame(wx.Frame):
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
         self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
 
+        frame_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(frame_sizer)
+
+        header_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        frame_sizer.Add(header_sizer, 0, wx.EXPAND | wx.ALL, border=5)
+
         self.spin = wx.SpinCtrl(self, min=0, max=99999,
                                 style=wx.ALIGN_CENTER_HORIZONTAL | wx.SP_ARROW_KEYS | wx.SP_WRAP | wx.TE_PROCESS_ENTER)
         self.spin.SetFont(
             wx.Font(30, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Segoe UI"))
-        self.spin.Bind(wx.EVT_SPINCTRL, self.on_spin)
-        self.spin.Bind(wx.EVT_TEXT, self.on_spin_text)
+        self.spin.Bind(wx.EVT_SPINCTRL, lambda e: self.on_number_change(e.GetPosition()))
+        self.spin.Bind(wx.EVT_TEXT, lambda e: self.on_number_change(e.GetInt()))
 
-        frame_sizer = wx.BoxSizer(wx.VERTICAL)
-        frame_sizer.Add(self.spin, flag=wx.ALIGN_CENTER | wx.ALL, border=5)
+        header_sizer.Add(self.spin, 1, flag=wx.ALL)
+
+        display_checkbox = wx.CheckBox(self, label='Display')
+        display_checkbox.SetValue(True)
+        display_checkbox.Bind(wx.EVT_CHECKBOX, lambda e: self.on_display_check(e.IsChecked()))
+
+        header_sizer.Add(display_checkbox, flag=wx.CENTER | wx.LEFT | wx.RIGHT, border=40)
 
         info_panel = ScrolledPanel(self, style=wx.BORDER_THEME | wx.TAB_TRAVERSAL)
+        info_panel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_MENU))
+
+        panel_sizer = wx.BoxSizer(wx.VERTICAL)
+        info_panel.SetSizer(panel_sizer)
 
         self.info_text = wx.StaticText(info_panel)
         self.info_text.Wrap(-1)
         self.info_text.SetFocus()  # this removes focus from the SpinCtrl
 
-        panel_sizer = wx.BoxSizer(wx.VERTICAL)
-        panel_sizer.Add(self.info_text, 0, wx.ALL, 5)
+        panel_sizer.Add(self.info_text, 0, wx.ALL, border=5)
 
-        info_panel.SetSizer(panel_sizer)
         info_panel.Layout()
         info_panel.SetupScrolling()
         panel_sizer.FitInside(info_panel)
-        frame_sizer.Add(info_panel, 1, wx.EXPAND | wx.ALL, 5)
+        frame_sizer.Add(info_panel, 1, wx.EXPAND | wx.ALL, border=5)
 
-        self.SetSizer(frame_sizer)
         self.Layout()
         self.Centre(wx.BOTH)
 
@@ -103,13 +116,10 @@ class ControlFrame(wx.Frame):
     def set_number(self, number: int):
         self.spin.SetValue(number)
 
-    def on_spin(self, event: wx.SpinEvent):
-        self.on_number_change(event.GetPosition())
-
-    def on_spin_text(self, event: wx.CommandEvent):
-        self.on_number_change(event.GetInt())
-
     def on_number_change(self, number: int):
+        pass
+
+    def on_display_check(self, checked: bool):
         pass
 
 
