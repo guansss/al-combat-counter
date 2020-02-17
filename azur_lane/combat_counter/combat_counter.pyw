@@ -24,20 +24,20 @@ def main():
 
     record = 0
 
-    try:
-        with open('record.txt', 'r') as r:
-            record = int(r.read() or 0)
-    except Exception:
-        pass
-
-    on_count(record)  # display initially
-
     worker.on_count = on_count
 
     def on_number_change(number: int):
         # this is not thread-safe and can cause inconsistency, but it does'nt matter in this project
         setattr(worker, 'count', number)
         on_count(number)  # manually update the display
+
+    try:
+        with open('record.txt', 'r') as r:
+            record = int(r.read() or 0)
+    except Exception:
+        pass
+
+    on_number_change(record)  # display initially
 
     app.control_panel.on_number_change = on_number_change
 
