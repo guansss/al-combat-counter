@@ -7,15 +7,20 @@ def main():
 
     worker = Worker(lambda text: app.control_panel.log(text))
 
-    def worker_on_count(number: int):
+    def on_count(number: int):
         app.display_panel.display('挑战次数：%d' % number)
         app.control_panel.set_number(number)
 
-    worker_on_count(0)  # display initially
+    on_count(0)  # display initially
 
-    worker.on_count = worker_on_count
+    worker.on_count = on_count
 
-    app.control_panel.on_number_change = lambda number: setattr(worker, 'count', number)
+    def on_number_change(number: int):
+        # this is not thread-safe and can cause inconsistency, but it does'nt matter in this project
+        setattr(worker, 'count', number)
+        on_count(number)  # manually update the display
+
+    app.control_panel.on_number_change = on_number_change
 
     worker.start()
 
