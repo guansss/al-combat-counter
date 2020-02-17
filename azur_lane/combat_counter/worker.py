@@ -1,13 +1,16 @@
 import collections
 import math
 import re
+import sys
 import threading
 import time
 from typing import NewType, Optional, Tuple, List, Callable
 
 import win32gui
 
-from utils.graphic import unpack_rgb_from_colorref
+sys.path.append('../../')
+
+from utils.graphic import unpack_rgb_from_colorref  # noqa: E402
 
 Handle = NewType('Handle', int)
 

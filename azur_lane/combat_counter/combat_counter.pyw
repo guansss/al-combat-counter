@@ -1,5 +1,5 @@
-from azur_lane.combat_counter.gui import App
-from azur_lane.combat_counter.worker import Worker
+from gui import App
+from worker import Worker
 
 
 def main():
