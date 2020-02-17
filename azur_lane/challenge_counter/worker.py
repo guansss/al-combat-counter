@@ -46,14 +46,25 @@ class Worker(threading.Thread):
         pass
 
 
+'''
+A loading scene is like:
+┌────────────────────────────────────────────┐
+│                                            │
+│                                            │
+│  ###############=========================  │  <- progress bar (40 sample points)
+└────────────────────────────────────────────┘
+
+where # represents the foreground color and = represents the background color
+'''
+
 PROGRESS_FG_COLOR = (90, 154, 255)  # RGB
 PROGRESS_BG_COLOR = (224, 224, 224)  # RGB
 
 COLOR_COMPARE_TOLERANCE = math.dist((0, 0, 0), (40, 40, 40))
 
 PROGRESS_SAMPLE_POINTS_AMOUNT = 6
-PROGRESS_RECOGNIZE_REQUIRED_POINTS = 4
-PROGRESS_RECOGNIZE_REQUIRED_POINTS_PER_SIDE = 2
+PROGRESS_RECOGNITION_REQUIRED_POINTS = 4  # the minimum points required for the sum of foreground and background
+PROGRESS_RECOGNITION_REQUIRED_POINTS_EACH = 2  # the minimum points required for each of foreground and background
 
 # the coordinates was recorded in 2560*1440 resolution
 PROGRESS_Y = 1356 / 1440
@@ -112,9 +123,9 @@ class GameWindow(object):
             #         sample_colors
             #         ))), fg_point_amount, bg_point_amount, self.combat_loading)
 
-            if fg_point_amount + bg_point_amount >= PROGRESS_RECOGNIZE_REQUIRED_POINTS \
-                    and fg_point_amount >= PROGRESS_RECOGNIZE_REQUIRED_POINTS_PER_SIDE \
-                    and bg_point_amount >= PROGRESS_RECOGNIZE_REQUIRED_POINTS_PER_SIDE:  # recognize the progress bar
+            if fg_point_amount + bg_point_amount >= PROGRESS_RECOGNITION_REQUIRED_POINTS \
+                    and fg_point_amount >= PROGRESS_RECOGNITION_REQUIRED_POINTS_EACH \
+                    and bg_point_amount >= PROGRESS_RECOGNITION_REQUIRED_POINTS_EACH:  # recognize the progress bar
                 self.combat_loading = True
                 self.next_detection_time = now + DETECTION_COOL_DOWN
             else:
