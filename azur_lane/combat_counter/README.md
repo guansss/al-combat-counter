@@ -19,4 +19,8 @@ class MyGameWindow(GameWindow):
 self.game_window = MyGameWindow(logger)
 ```
 
-The recognition may not succeed when the emulator window is too small.
+Recognition may not succeed when the emulator window is too small.
+
+Quitting the combat before it ends does not prevent the counter from increasing.
+
+**PVP combats are also counted.**
