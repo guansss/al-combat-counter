@@ -11,6 +11,8 @@ def main():
         app.display_panel.display('挑战次数：%d' % number)
         app.control_panel.set_number(number)
 
+    worker_on_count(0)  # display initially
+
     worker.on_count = worker_on_count
 
     worker.log = lambda text: app.control_panel.log(text)
