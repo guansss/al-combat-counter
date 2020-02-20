@@ -1,16 +1,11 @@
 import collections
 import math
 import re
-import sys
 import threading
 import time
 from typing import NewType, Optional, Tuple, List, Callable
 
 import win32gui
-
-sys.path.append('../../')  # noqa: E402
-
-from utils.graphic import unpack_rgb_from_colorref
 
 Handle = NewType('Handle', int)
 RGBColor = collections.namedtuple('Color', ['r', 'g', 'b'])
@@ -193,3 +188,13 @@ def get_window(title_pattern: str, parent: Optional[Handle] = None) -> Tuple[Han
             raise
 
     return hwnd, title
+
+
+def unpack_rgb_from_colorref(value: int) -> Tuple[int, int, int]:
+    """
+    The COLORREF has an inverse RGB sequence, which is BBGGRR.
+    https://docs.microsoft.com/en-us/windows/win32/gdi/colorref
+    https://stackoverflow.com/a/2262117
+    """
+
+    return value % 256, value // 256 % 256, value // 256 // 256 % 256
