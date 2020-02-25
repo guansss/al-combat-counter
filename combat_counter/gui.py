@@ -35,7 +35,6 @@ class App(wx.App):
         self.control_panel.on_display_check = lambda checked: self.display_panel.Show(checked)
         self.control_panel.Bind(wx.EVT_CLOSE, self.on_exit)
 
-        self.display_panel.Show()
         self.control_panel.Show()
 
     def on_exit(self, event: wx.CloseEvent):
@@ -71,7 +70,6 @@ class ControlFrame(wx.Frame):
         header_sizer.Add(self.spin, 1, flag=wx.ALL)
 
         display_checkbox = wx.CheckBox(self, label='Display')
-        display_checkbox.SetValue(True)
         display_checkbox.Bind(wx.EVT_CHECKBOX, lambda e: self.on_display_check(e.IsChecked()))
 
         header_sizer.Add(display_checkbox, flag=wx.CENTER | wx.LEFT | wx.RIGHT, border=40)
