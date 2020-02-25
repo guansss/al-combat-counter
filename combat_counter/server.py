@@ -11,6 +11,9 @@ PORT = 8888
 class Server(threading.Thread):
     def __init__(self, directory: str):
         super().__init__()
+
+        self.setDaemon(True)
+
         self.dir = directory
         self.websockets: List[web.WebSocketResponse] = []
         self.loop: Optional[asyncio.AbstractEventLoop] = None
