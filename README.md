@@ -6,9 +6,13 @@ Automatic combat recording for Azur Lane.
 
 **PVP combats are also counted.**
 
-Quitting the combat before it ends does not prevent the counter from increasing.
+Quitting the combat before it ends does not prevent counter's increasing.
 
 Recognition may not succeed when the emulator window is too small.
+
+## Usage
+
+Just keep both `combat_counter.pyw` and your emulator running. The counter will increase when a combat starts.
 
 ## Emulator Recognition
 
