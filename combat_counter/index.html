@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+  }
+
+  #text {
+    height: 100%;
+    overflow: hidden;
+    background: rgba(0, 0, 0, .5);
+    color: white;
+    font-size: 90vh;
+    line-height: 1;
+    word-break: keep-all;
+  }
+  </style>
+</head>
+<body>
+<div id="text">Loading...</div>
+<script>
+// This HTML file is intended to be served by server.py and used in OBS' browser source for streaming.
+// To get transparent background, append following CSS to the custom CSS of browser source:
+// #text { background: none }
+
+const text = document.getElementById('text');
+
+function show(message) {
+  text.innerText = message;
+}
+
+function connect() {
+  show('Connecting');
+
+  const ws = new WebSocket('ws://localhost:8888/ws');
+
+  ws.addEventListener('open', () => show('Connected'));
+
+  ws.addEventListener('message', e => show('出击次数：' + e.data));
+
+  ws.addEventListener('close', () => setTimeout(connect, 500));
+}
+
+connect();
+</script>
+</body>
+</html>

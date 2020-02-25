@@ -5,16 +5,23 @@ os.chdir(os.path.dirname(__file__))  # noqa: E402
 
 from gui import App
 from worker import Worker
+from server import Server
 
 
 def main():
     app = App()
 
     worker = Worker(lambda text: app.control_panel.log(text))
+    worker.start()
+
+    server = Server(os.getcwd())
+    server.start()
 
     def on_count(number: int):
         app.display_panel.display('出击次数：%d' % number)
         app.control_panel.set_number(number)
+
+        server.send(str(number))
 
         try:
             with open('record.txt', 'w') as w:
@@ -40,8 +47,6 @@ def main():
     on_number_change(record)  # display initially
 
     app.control_panel.on_number_change = on_number_change
-
-    worker.start()
 
     app.MainLoop()
 
