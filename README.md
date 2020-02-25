@@ -4,6 +4,14 @@ Automatic combat recording for Azur Lane.
 
 ![preview](preview.jpg)
 
+**PVP combats are also counted.**
+
+Quitting the combat before it ends does not prevent the counter from increasing.
+
+Recognition may not succeed when the emulator window is too small.
+
+## Emulator Recognition
+
 Currently only MuMu Emulator is supported for recognition. To support another emulator, you can inherit the `GameWindow` class and replace the constructor in `Worker.__init__()`.
 
 ```python
@@ -19,8 +27,10 @@ class MyGameWindow(GameWindow):
 self.game_window = MyGameWindow(logger)
 ```
 
-Recognition may not succeed when the emulator window is too small.
+## OBS Streaming
 
-Quitting the combat before it ends does not prevent the counter from increasing.
+Make sure the script is running to get this working.
 
-**PVP combats are also counted.**
+1. Add a browser source, set URL to `http://127.0.0.1:8888/`.
+2. Set size to `300, 40` or whatever you think better.
+3. Append `#text { background: none }` to the custom CSS of browser source if you want a transparent background.
